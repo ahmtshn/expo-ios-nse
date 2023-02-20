@@ -1,6 +1,7 @@
 import {
   ConfigPlugin,
   withInfoPlist,
+  withEntitlementsPlist,
   withXcodeProject,
 } from "@expo/config-plugins";
 import * as fs from "fs";
@@ -19,6 +20,22 @@ import { NSEPluginProps, PluginOptions } from "../types/types";
 import assert from "assert";
 import getEasManagedCredentialsConfigExtra from "../support/eas/getEasManagedCredentialsConfigExtra";
 import { ExpoConfig } from "@expo/config-types";
+
+const withAppEnvironment: ConfigPlugin<NSEPluginProps> = (
+  config,
+  onesignalProps
+) => {
+  return withEntitlementsPlist(config, (newConfig) => {
+    if (onesignalProps?.mode == null) {
+      throw new Error(`
+        Missing required "mode" key in your app.json or app.config.js file for "onesignal-expo-plugin".
+        "mode" can be either "development" or "production".
+        Please see onesignal-expo-plugin's README.md for more details.`);
+    }
+    newConfig.modResults["aps-environment"] = onesignalProps.mode;
+    return newConfig;
+  });
+};
 
 const withRemoteNotificationsPermissions: ConfigPlugin<NSEPluginProps> = (
   config
@@ -76,6 +93,7 @@ const withEasManagedCredentials: ConfigPlugin<NSEPluginProps> = (config) => {
 };
 
 export const withIos: ConfigPlugin<NSEPluginProps> = (config, props) => {
+  withAppEnvironment(config, props);
   withRemoteNotificationsPermissions(config, props);
   withNSE(config, props);
   withEasManagedCredentials(config, props);
