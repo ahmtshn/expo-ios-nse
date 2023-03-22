@@ -2,9 +2,10 @@ export const IPHONEOS_DEPLOYMENT_TARGET = "11.0";
 export const TARGETED_DEVICE_FAMILY = `"1,2"`;
 
 export const NSE_PODFILE_SNIPPET = `
+
 target 'FBNotificationServiceExtension' do
   pod 'GoogleUtilities', '7.8.0'
-  pod 'Firebase/Messaging', '9.6.0' # eg 6.31.0
+  pod 'Firebase/Messaging', '10.6.0' # eg 6.31.0
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
 end`;
 
